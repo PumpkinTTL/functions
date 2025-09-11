@@ -1,11 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>功能导航首页</title>
+    <!-- 引入 Ant Design Vue 样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ant-design-vue@4.0.0/dist/antd.min.css">
+    <!-- 引入 Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-    首页测试提交
+    <div id="app">
+        <a-layout style="min-height: 100vh;">
+            <a-layout-header style="background: #fff; padding: 0; box-shadow: 0 2px 8px #f0f1f2;">
+                <div style="padding: 0 24px;">
+                    <h1 style="margin: 0; line-height: 64px; color: #1890ff;">管理系统</h1>
+                </div>
+            </a-layout-header>
+            
+            <a-layout-content style="margin: 24px 16px 0;">
+                <div style="padding: 24px; background: #fff; min-height: 360px;">
+                    <div class="navigation-container">
+                        <h1 class="page-title animate__animated animate__fadeInDown">功能导航</h1>
+                        <a-row :gutter="[24, 24]" justify="center">
+                            <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="(item, index) in navItems" :key="item.key">
+                                <a-card 
+                                    hoverable 
+                                    class="nav-card animate__animated animate__fadeInUp"
+                                    :class="`animate__delay-${index * 0.1}s`"
+                                    @click="handleNavClick(item)"
+                                >
+                                    <template #cover>
+                                        <div class="nav-content">
+                                            <div class="nav-icon">{{ item.icon }}</div>
+                                            <h3>{{ item.title }}</h3>
+                                            <p>{{ item.description }}</p>
+                                        </div>
+                                    </template>
+                                </a-card>
+                            </a-col>
+                        </a-row>
+                    </div>
+                </div>
+            </a-layout-content>
+            
+            <a-layout-footer style="text-align: center; background: #fff;">
+                <p>© 2025 管理系统. All Rights Reserved.</p>
+            </a-layout-footer>
+        </a-layout>
+    </div>
+
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 Ant Design Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/ant-design-vue@4.0.0/dist/antd.min.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/index.js"></script>
 </body>
 </html>
