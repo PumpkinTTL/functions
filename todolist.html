@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,34 +13,37 @@
     <link rel="stylesheet" href="css/normal.css">
     <link rel="stylesheet" href="css/todolist.css">
 </head>
+
 <body>
     <div id="app">
         <div class="todo-container">
             <!-- 顶部标题栏 -->
             <div class="header-section fade-in">
-                <div class="header-content">
+                <div class="header-left">
                     <h1 class="app-title">
                         <i class="fas fa-tasks"></i>
                         智能待办管理器
                     </h1>
                     <p class="app-subtitle">高效管理您的任务，提升工作效率</p>
                 </div>
-                <div class="stats-bar">
-                    <div class="stat-item">
-                        <span class="stat-number">{{ totalTodos }}</span>
-                        <span class="stat-label">总任务</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">{{ completedTodos }}</span>
-                        <span class="stat-label">已完成</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">{{ pendingTodos }}</span>
-                        <span class="stat-label">待处理</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">{{ completionRate }}%</span>
-                        <span class="stat-label">完成率</span>
+                <div class="header-right">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ totalTodos }}</span>
+                            <span class="stat-label">总任务</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ completedTodos }}</span>
+                            <span class="stat-label">已完成</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ pendingTodos }}</span>
+                            <span class="stat-label">待处理</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ completionRate }}%</span>
+                            <span class="stat-label">完成率</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,14 +52,8 @@
             <div class="input-section fade-in">
                 <div class="input-container">
                     <div class="input-group">
-                        <input 
-                            type="text" 
-                            v-model="newTodo" 
-                            @keyup.enter="addTodo"
-                            placeholder="添加新的待办事项..."
-                            class="todo-input"
-                            :class="{ error: inputError }"
-                        >
+                        <input type="text" v-model="newTodo" @keyup.enter="addTodo" placeholder="添加新的待办事项..."
+                            class="todo-input" :class="{ error: inputError }">
                         <select v-model="newPriority" class="priority-select">
                             <option value="low">低优先级</option>
                             <option value="medium" selected>中优先级</option>
@@ -73,13 +71,8 @@
             <!-- 筛选和操作栏 -->
             <div class="control-section fade-in">
                 <div class="filter-buttons">
-                    <button 
-                        v-for="filter in filters" 
-                        :key="filter.value"
-                        @click="currentFilter = filter.value"
-                        class="filter-btn"
-                        :class="{ active: currentFilter === filter.value }"
-                    >
+                    <button v-for="filter in filters" :key="filter.value" @click="currentFilter = filter.value"
+                        class="filter-btn" :class="{ active: currentFilter === filter.value }">
                         <i :class="filter.icon"></i>
                         {{ filter.label }}
                     </button>
@@ -105,12 +98,8 @@
                 </div>
                 <div v-else class="todos-list">
                     <transition-group name="todo" tag="div">
-                        <div 
-                            v-for="todo in filteredTodos" 
-                            :key="todo.id" 
-                            class="todo-item"
-                            :class="{ completed: todo.completed, [todo.priority]: true }"
-                        >
+                        <div v-for="todo in filteredTodos" :key="todo.id" class="todo-item"
+                            :class="{ completed: todo.completed, [todo.priority]: true }">
                             <div class="todo-checkbox" @click="toggleTodo(todo.id)">
                                 <i class="fas fa-check" v-if="todo.completed"></i>
                             </div>
@@ -149,13 +138,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input 
-                            type="text" 
-                            v-model="editText" 
-                            @keyup.enter="saveEdit"
-                            class="edit-input"
-                            ref="editInput"
-                        >
+                        <input type="text" v-model="editText" @keyup.enter="saveEdit" class="edit-input"
+                            ref="editInput">
                         <select v-model="editPriority" class="edit-priority">
                             <option value="low">低优先级</option>
                             <option value="medium">中优先级</option>
@@ -176,4 +160,5 @@
     <!-- Custom JS -->
     <script src="js/todolist.js"></script>
 </body>
+
 </html>
