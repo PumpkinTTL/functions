@@ -13,17 +13,40 @@ createApp({
             investmentAmount: null, // 投资金额
             leverage: 1,           // 杠杆倍数（仅合约交易）
             positionType: 'long',  // 持仓方向：long（做多）或 short（做空）
-            tradingFee: 0.1        // 交易手续费百分比
+            tradingFee: 0.1,       // 交易手续费百分比
+            
+            // 动画控制
+            hasShownOnce: false         // 是否已经显示过一次
         };
     },
     
     computed: {
         // 验证输入是否有效
         isValidInput() {
-            return this.entryPrice > 0 && 
-                   this.exitPrice > 0 && 
-                   this.investmentAmount > 0 &&
-                   this.tradingFee >= 0;
+            const isValid = this.entryPrice > 0 && 
+                           this.exitPrice > 0 && 
+                           this.investmentAmount > 0 &&
+                           this.tradingFee >= 0;
+            
+            // 当第一次验证通过时，移除动画类防止重复触发
+            if (isValid && !this.hasShownOnce) {
+                this.hasShownOnce = true;
+                // 3秒后移除动画类，防止后续重复触发
+                setTimeout(() => {
+                    const resultSection = document.querySelector('.results-section');
+                    const resultCards = document.querySelectorAll('.result-card');
+                    
+                    if (resultSection) {
+                        resultSection.classList.remove('animate__animated', 'animate__fadeInUp', 'animate__delay-1s');
+                    }
+                    
+                    resultCards.forEach(card => {
+                        card.classList.remove('animate__animated', 'animate__zoomIn', 'animate__delay-1s');
+                    });
+                }, 3000);
+            }
+            
+            return isValid;
         },
         
         // 计算交易结果
@@ -167,9 +190,9 @@ createApp({
     // 组件挂载后的初始化
     mounted() {
         // 设置默认值
-        this.entryPrice = 43000;
-        this.exitPrice = 47000;
-        this.investmentAmount = 10000;
+        this.entryPrice = 200;
+        this.exitPrice = 201;
+        this.investmentAmount = 1000;
         this.tradingFee = 0.1;
         
         // 添加输入框的实时验证
