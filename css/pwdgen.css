@@ -233,7 +233,7 @@
     flex: 1;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.3);
+    background: #e2e8f0;
     outline: none;
     -webkit-appearance: none;
 }

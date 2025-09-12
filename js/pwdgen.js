@@ -347,6 +347,20 @@ createApp({
                     document.body.removeChild(messageEl);
                 }, 300);
             }, 3000);
+        },
+        
+        // 添加点击音效
+        addClickSounds() {
+            const buttons = document.querySelectorAll('button, .checkbox-item, .type-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 简单的点击反馈
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transform = '';
+                    }, 150);
+                });
+            });
         }
     },
     
@@ -377,19 +391,5 @@ createApp({
         
         // 添加点击音效（可选）
         this.addClickSounds();
-    },
-    
-    // 添加点击音效
-    addClickSounds() {
-        const buttons = document.querySelectorAll('button, .checkbox-item, .type-btn');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                // 简单的点击反馈
-                button.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    button.style.transform = '';
-                }, 150);
-            });
-        });
     }
 }).mount('#app');
