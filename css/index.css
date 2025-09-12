@@ -161,6 +161,14 @@
         0 3px 10px rgba(214, 158, 46, 0.08);
 }
 
+.nav-btn[data-color="#e53e3e"]:hover {
+    background: #e53e3e;
+    border-color: #e53e3e;
+    box-shadow: 
+        0 8px 25px rgba(229, 62, 62, 0.12),
+        0 3px 10px rgba(229, 62, 62, 0.08);
+}
+
 /* ==== 高级统计卡片 ==== */
 .stats-section {
     background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);

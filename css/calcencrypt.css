@@ -20,7 +20,7 @@ body::before {
     max-width: 1000px;
     width: calc(100% - 24px);
     margin: 20px auto;
-    padding: 0;
+    padding: 16px 0 0 0;
     background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
     border-radius: 12px;
     border: 1px solid #e2e8f0;
@@ -28,6 +28,47 @@ body::before {
     backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
+}
+
+/* ==== 面包屑导航 ==== */
+.nav-breadcrumb {
+    margin: 0 24px 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.breadcrumb-link {
+    color: #637cec;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+    background: rgba(99, 125, 236, 0.1);
+    transform: translateX(-1px);
+}
+
+.breadcrumb-link i {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.breadcrumb-separator {
+    color: #cbd5e0;
+    font-weight: 300;
+}
+
+.breadcrumb-current {
+    color: #4a5568;
+    font-weight: 500;
+}
 }
 
 /* 卡片顶部装饰条 */

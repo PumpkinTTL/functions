@@ -25,6 +25,46 @@
     text-align: left;
 }
 
+/* ==== 面包屑导航 ==== */
+.nav-breadcrumb {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.breadcrumb-link {
+    color: #637cec;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+    background: rgba(99, 125, 236, 0.1);
+    transform: translateX(-1px);
+}
+
+.breadcrumb-link i {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.breadcrumb-separator {
+    color: #cbd5e0;
+    font-weight: 300;
+}
+
+.breadcrumb-current {
+    color: #4a5568;
+    font-weight: 500;
+}
+
 .header-right {
     flex-shrink: 0;
 }

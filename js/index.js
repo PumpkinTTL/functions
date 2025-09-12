@@ -35,6 +35,13 @@ window.addEventListener('load', function() {
             title: '智能待办管理器',
             color: '#d69e2e',
             url: 'todolist.html'
+          },
+          {
+            key: 'decision-wheel',
+            icon: 'fas fa-dharmachakra',
+            title: '随机决策轮盘',
+            color: '#e53e3e',
+            url: 'decision-wheel.html'
           }
         ]);
 
@@ -43,7 +50,7 @@ window.addEventListener('load', function() {
           {
             key: 'total-functions',
             title: '可用功能',
-            value: 3,
+            value: 4,
             suffix: '个',
             prefix: ''
           },
@@ -62,8 +69,8 @@ window.addEventListener('load', function() {
             prefix: ''
           },
           {
-            key: 'todo-manager',
-            title: '待办管理器',
+            key: 'decision-wheel',
+            title: '决策轮盘',
             value: 1,
             suffix: '个',
             prefix: ''
@@ -160,13 +167,14 @@ function showFallbackContent() {
           <button onclick="window.location.href='calcencrypt.html'" style="padding: 14px 24px; background: #637cec; color: white; border: none; border-radius: 8px; cursor: pointer;">🧮 加密货币计算器</button>
           <button onclick="window.location.href='pwdgen.html'" style="padding: 14px 24px; background: #38a169; color: white; border: none; border-radius: 8px; cursor: pointer;">🔑 智能密码生成器</button>
           <button onclick="window.location.href='todolist.html'" style="padding: 14px 24px; background: #d69e2e; color: white; border: none; border-radius: 8px; cursor: pointer;">📝 智能待办管理器</button>
+          <button onclick="window.location.href='decision-wheel.html'" style="padding: 14px 24px; background: #e53e3e; color: white; border: none; border-radius: 8px; cursor: pointer;">🎲 随机决策轮盘</button>
         </div>
         <div style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center;">
-            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">3个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
+            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">4个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
             <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">加密计算器</div></div>
             <div><div style="font-size: 1.8rem; color: #38a169; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">密码生成器</div></div>
-            <div><div style="font-size: 1.8rem; color: #d69e2e; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">待办管理器</div></div>
+            <div><div style="font-size: 1.8rem; color: #e53e3e; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">决策轮盘</div></div>
           </div>
         </div>
       </div>

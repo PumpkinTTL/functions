@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机决策轮盘</title>
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入 Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/decision-wheel.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="wheel-container">
+            <!-- 顶部标题区域 -->
+            <div class="header-section fade-in">
+                <div class="header-left">
+                    <div class="nav-breadcrumb">
+                        <a href="index.html" class="breadcrumb-link">
+                            <i class="fas fa-home"></i>
+                            首页
+                        </a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current">随机决策轮盘</span>
+                    </div>
+                    <h1 class="app-title">
+                        <i class="fas fa-dharmachakra"></i>
+                        随机决策轮盘
+                    </h1>
+                    <p class="app-subtitle">让命运为你做决定，选择困难症的救星</p>
+                </div>
+                <div class="header-right">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ totalSpins }}</span>
+                            <span class="stat-label">总旋转</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ currentOptions.length }}</span>
+                            <span class="stat-label">选项数</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ savedResults.length }}</span>
+                            <span class="stat-label">历史记录</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ isSpinning ? '旋转中' : '等待中' }}</span>
+                            <span class="stat-label">状态</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 轮盘主体区域 -->
+            <div class="wheel-main-section fade-in">
+                <div class="wheel-display">
+                    <!-- 指针 -->
+                    <div class="wheel-pointer">
+                        <i class="fas fa-caret-down"></i>
+                    </div>
+                    
+                    <!-- 轮盘 -->
+                    <div class="wheel" :class="{ spinning: isSpinning }" :style="{ transform: `rotate(${wheelRotation}deg)` }">
+                        <div class="wheel-center">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div 
+                            v-for="(option, index) in currentOptions" 
+                            :key="index"
+                            class="wheel-segment"
+                            :style="{
+                                transform: `rotate(${index * (360 / currentOptions.length)}deg)`,
+                                backgroundColor: option.color,
+                                '--segment-angle': `${360 / currentOptions.length}deg`
+                            }"
+                        >
+                            <div class="segment-content">
+                                <span class="segment-text">{{ option.text }}</span>
+                                <span class="segment-weight" v-if="option.weight > 1">×{{ option.weight }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="wheel-controls">
+                    <button 
+                        class="spin-btn" 
+                        :disabled="isSpinning || currentOptions.length < 2"
+                        @click="spinWheel"
+                    >
+                        <i class="fas fa-play"></i>
+                        {{ isSpinning ? '旋转中...' : '开始旋转' }}
+                    </button>
+                    
+                    <button class="preset-btn" @click="loadPreset('food')">
+                        <i class="fas fa-utensils"></i>
+                        吃什么
+                    </button>
+                    
+                    <button class="preset-btn" @click="loadPreset('activity')">
+                        <i class="fas fa-gamepad"></i>
+                        做什么
+                    </button>
+                    
+                    <button class="preset-btn" @click="loadPreset('place')">
+                        <i class="fas fa-map-marker-alt"></i>
+                        去哪里
+                    </button>
+                </div>
+            </div>
+
+            <!-- 选项管理区域 -->
+            <div class="options-section fade-in">
+                <div class="section-title">
+                    <h3><i class="fas fa-cog"></i> 选项管理</h3>
+                </div>
+                
+                <div class="options-grid">
+                    <!-- 添加选项 -->
+                    <div class="add-option-card">
+                        <div class="input-group">
+                            <input 
+                                v-model="newOptionText" 
+                                @keyup.enter="addOption"
+                                placeholder="输入新选项..."
+                                class="option-input"
+                            >
+                            <select v-model="newOptionWeight" class="weight-select">
+                                <option value="1">权重 1×</option>
+                                <option value="2">权重 2×</option>
+                                <option value="3">权重 3×</option>
+                                <option value="5">权重 5×</option>
+                            </select>
+                            <button @click="addOption" class="add-btn">
+                                <i class="fas fa-plus"></i>
+                                添加
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 选项列表 -->
+                    <div 
+                        v-for="(option, index) in currentOptions" 
+                        :key="index"
+                        class="option-card"
+                        :style="{ borderLeftColor: option.color }"
+                    >
+                        <div class="option-content">
+                            <span class="option-text">{{ option.text }}</span>
+                            <span class="option-weight" v-if="option.weight > 1">权重: {{ option.weight }}×</span>
+                        </div>
+                        <div class="option-actions">
+                            <button @click="removeOption(index)" class="remove-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结果历史区域 -->
+            <div class="history-section fade-in" v-if="savedResults.length > 0">
+                <div class="section-title">
+                    <h3><i class="fas fa-history"></i> 历史记录</h3>
+                    <button @click="clearHistory" class="clear-btn">
+                        <i class="fas fa-trash-alt"></i>
+                        清空记录
+                    </button>
+                </div>
+                
+                <div class="history-list">
+                    <div 
+                        v-for="(result, index) in savedResults.slice().reverse()" 
+                        :key="index"
+                        class="history-item"
+                    >
+                        <div class="result-info">
+                            <span class="result-text">{{ result.text }}</span>
+                            <span class="result-time">{{ formatTime(result.timestamp) }}</span>
+                        </div>
+                        <div class="result-color" :style="{ backgroundColor: result.color }"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结果弹窗 -->
+            <div class="result-modal" v-if="showResult" @click="closeResult">
+                <div class="result-content" @click.stop>
+                    <div class="result-animation">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2>决策结果</h2>
+                    <div class="result-display" :style="{ backgroundColor: lastResult.color }">
+                        {{ lastResult.text }}
+                    </div>
+                    <button @click="closeResult" class="result-close-btn">
+                        <i class="fas fa-check"></i>
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Custom JS -->
+    <script src="js/decision-wheel.js"></script>
+</body>
+
+</html>
