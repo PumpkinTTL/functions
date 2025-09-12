@@ -32,7 +32,8 @@
             <!-- 导航按钮区域 -->
             <div class="navigation-grid animate__animated animate__fadeInUp">
                 <div class="nav-buttons">
-                    <button v-for="item in navItems" :key="item.key" class="nav-btn" @click="handleNavClick(item)">
+                    <button v-for="item in navItems" :key="item.key" class="nav-btn" :data-color="item.color"
+                        @click="handleNavClick(item)">
                         <i :class="item.icon" class="nav-icon"></i>
                         {{ item.title }}
                     </button>
