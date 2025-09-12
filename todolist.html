@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能待办管理器</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/todolist.css">
+</head>
+<body>
+    <div id="app">
+        <div class="todo-container">
+            <!-- 顶部标题栏 -->
+            <div class="header-section fade-in">
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <i class="fas fa-tasks"></i>
+                        智能待办管理器
+                    </h1>
+                    <p class="app-subtitle">高效管理您的任务，提升工作效率</p>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ totalTodos }}</span>
+                        <span class="stat-label">总任务</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ completedTodos }}</span>
+                        <span class="stat-label">已完成</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ pendingTodos }}</span>
+                        <span class="stat-label">待处理</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ completionRate }}%</span>
+                        <span class="stat-label">完成率</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 任务输入区 -->
+            <div class="input-section fade-in">
+                <div class="input-container">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            v-model="newTodo" 
+                            @keyup.enter="addTodo"
+                            placeholder="添加新的待办事项..."
+                            class="todo-input"
+                            :class="{ error: inputError }"
+                        >
+                        <select v-model="newPriority" class="priority-select">
+                            <option value="low">低优先级</option>
+                            <option value="medium" selected>中优先级</option>
+                            <option value="high">高优先级</option>
+                        </select>
+                        <button @click="addTodo" class="add-btn" :disabled="!newTodo.trim()">
+                            <i class="fas fa-plus"></i>
+                            添加任务
+                        </button>
+                    </div>
+                    <div v-if="inputError" class="error-message">{{ inputError }}</div>
+                </div>
+            </div>
+
+            <!-- 筛选和操作栏 -->
+            <div class="control-section fade-in">
+                <div class="filter-buttons">
+                    <button 
+                        v-for="filter in filters" 
+                        :key="filter.value"
+                        @click="currentFilter = filter.value"
+                        class="filter-btn"
+                        :class="{ active: currentFilter === filter.value }"
+                    >
+                        <i :class="filter.icon"></i>
+                        {{ filter.label }}
+                    </button>
+                </div>
+                <div class="action-buttons">
+                    <button @click="clearCompleted" class="clear-btn" :disabled="completedTodos === 0">
+                        <i class="fas fa-trash-alt"></i>
+                        清除已完成
+                    </button>
+                    <button @click="clearAll" class="clear-all-btn" :disabled="totalTodos === 0">
+                        <i class="fas fa-broom"></i>
+                        清空所有
+                    </button>
+                </div>
+            </div>
+
+            <!-- 任务列表 -->
+            <div class="todos-section fade-in">
+                <div v-if="filteredTodos.length === 0" class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>{{ getEmptyMessage() }}</h3>
+                    <p>{{ getEmptySubMessage() }}</p>
+                </div>
+                <div v-else class="todos-list">
+                    <transition-group name="todo" tag="div">
+                        <div 
+                            v-for="todo in filteredTodos" 
+                            :key="todo.id" 
+                            class="todo-item"
+                            :class="{ completed: todo.completed, [todo.priority]: true }"
+                        >
+                            <div class="todo-checkbox" @click="toggleTodo(todo.id)">
+                                <i class="fas fa-check" v-if="todo.completed"></i>
+                            </div>
+                            <div class="todo-content">
+                                <div class="todo-text" :class="{ completed: todo.completed }">
+                                    {{ todo.text }}
+                                </div>
+                                <div class="todo-meta">
+                                    <span class="todo-priority" :class="todo.priority">
+                                        <i class="fas fa-flag"></i>
+                                        {{ getPriorityText(todo.priority) }}
+                                    </span>
+                                    <span class="todo-time">{{ formatTime(todo.createdAt) }}</span>
+                                </div>
+                            </div>
+                            <div class="todo-actions">
+                                <button @click="editTodo(todo)" class="edit-btn" v-if="!todo.completed">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button @click="deleteTodo(todo.id)" class="delete-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </transition-group>
+                </div>
+            </div>
+
+            <!-- 编辑模态框 -->
+            <div v-if="editingTodo" class="modal-overlay" @click="cancelEdit">
+                <div class="modal-content" @click.stop>
+                    <div class="modal-header">
+                        <h3>编辑任务</h3>
+                        <button @click="cancelEdit" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input 
+                            type="text" 
+                            v-model="editText" 
+                            @keyup.enter="saveEdit"
+                            class="edit-input"
+                            ref="editInput"
+                        >
+                        <select v-model="editPriority" class="edit-priority">
+                            <option value="low">低优先级</option>
+                            <option value="medium">中优先级</option>
+                            <option value="high">高优先级</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="cancelEdit" class="cancel-btn">取消</button>
+                        <button @click="saveEdit" class="save-btn">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Custom JS -->
+    <script src="js/todolist.js"></script>
+</body>
+</html>
