@@ -1,0 +1,939 @@
+/* ==== 精美密码生成器 ==== */
+.password-generator-card {
+    max-width: 680px;
+    margin: 20px auto;
+    width: calc(100% - 40px);
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.02),
+        0 6px 16px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 精致顶部装饰条 */
+.password-generator-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #637cec 0%, #38a169 50%, #637cec 100%);
+    border-radius: 16px 16px 0 0;
+}
+
+.card-header {
+    padding: 24px 28px 16px;
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.card-title {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    font-weight: 100;
+    color: #1a202c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    letter-spacing: -0.3px;
+}
+
+.card-title i {
+    color: #637cec;
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.card-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #a0aec0;
+    font-weight: 300;
+    letter-spacing: 0.2px;
+}
+
+.card-body {
+    padding: 12px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ==== 精美密码显示区域 ==== */
+.password-section {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.password-display {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.password-output {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.password-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #ffffff;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a202c;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.password-input:focus {
+    border-color: #637cec;
+    box-shadow: 0 0 0 3px rgba(99, 125, 236, 0.1);
+}
+
+.password-input.weak { border-color: #e53e3e; }
+.password-input.medium { border-color: #d69e2e; }
+.password-input.strong { border-color: #38a169; }
+.password-input.very-strong { border-color: #8b5cf6; }
+
+.copy-btn {
+    padding: 10px;
+    background: #637cec;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(99, 125, 236, 0.2);
+}
+
+.copy-btn:hover:not(:disabled) {
+    background: #5a67d8;
+    box-shadow: 0 4px 12px rgba(99, 125, 236, 0.3);
+}
+
+.copy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #a0aec0;
+}
+
+.password-strength {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.strength-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strength-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.strength-fill.weak { background: #e53e3e; }
+.strength-fill.medium { background: #d69e2e; }
+.strength-fill.strong { background: #38a169; }
+.strength-fill.very-strong { background: #8b5cf6; }
+
+.strength-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    min-width: 60px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.strength-text.weak { color: #e53e3e; }
+.strength-text.medium { color: #d69e2e; }
+.strength-text.strong { color: #38a169; }
+.strength-text.very-strong { color: #8b5cf6; }
+
+/* ==== 精美配置区域 ==== */
+.config-section {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.config-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.config-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #1a202c;
+    font-size: 0.8rem;
+    letter-spacing: 0.2px;
+}
+
+.config-label i {
+    color: #637cec;
+    width: 14px;
+    opacity: 0.8;
+    font-size: 0.8rem;
+}
+
+/* 范围滑块 */
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.range-slider {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #637cec;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(99, 125, 236, 0.3);
+    transition: all 0.15s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(99, 125, 236, 0.4);
+}
+
+.range-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #637cec;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 4px rgba(99, 125, 236, 0.3);
+}
+
+.range-value {
+    min-width: 32px;
+    text-align: center;
+    font-weight: 600;
+    color: #637cec;
+    background: rgba(99, 125, 236, 0.08);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    letter-spacing: 0.2px;
+}
+
+/* 类型选择器 */
+.type-selector {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.type-btn {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
+    min-width: 80px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.type-btn:hover {
+    border-color: #637cec;
+    background: rgba(99, 125, 236, 0.05);
+    color: #1a202c;
+}
+
+.type-btn.active {
+    border-color: #637cec;
+    background: #637cec;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(99, 125, 236, 0.25);
+}
+
+/* 复选框网格 */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 6px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.checkbox-item:hover {
+    background: #fafbfc;
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.checkbox-item input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #cbd5e0;
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    background: #ffffff;
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom {
+    background: #637cec;
+    border-color: #637cec;
+}
+
+.checkbox-item input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.checkbox-item input[type="checkbox"]:disabled + .checkbox-custom {
+    opacity: 0.5;
+}
+
+.checkbox-item i {
+    color: #637cec;
+    width: 12px;
+    opacity: 0.8;
+    font-size: 0.75rem;
+}
+
+.checkbox-item span {
+    color: #1a202c;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.checkbox-item small {
+    color: #a0aec0;
+    font-size: 0.65rem;
+    margin-left: auto;
+    font-weight: 400;
+}
+
+/* 操作按钮 */
+.action-section {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}
+
+.generate-btn, .clear-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 120px;
+    justify-content: center;
+    letter-spacing: 0.2px;
+}
+
+.generate-btn {
+    background: #637cec;
+    color: white;
+    box-shadow: 0 1px 4px rgba(99, 125, 236, 0.25);
+}
+
+.generate-btn:hover {
+    background: #5a67d8;
+    box-shadow: 0 2px 8px rgba(99, 125, 236, 0.35);
+}
+
+.clear-btn {
+    background: rgba(229, 62, 62, 0.08);
+    color: #e53e3e;
+    border: 1px solid rgba(229, 62, 62, 0.2);
+}
+
+.clear-btn:hover:not(:disabled) {
+    background: rgba(229, 62, 62, 0.12);
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+.clear-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==== 精美历史记录 ==== */
+.history-section {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.history-title {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1a202c;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.2px;
+}
+
+.history-title i {
+    color: #637cec;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.history-list {
+    max-height: 240px;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.history-list > div {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.history-item:hover {
+    background: #fafbfc;
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.history-password {
+    flex: 1;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-weight: 500;
+    color: #1a202c;
+    word-break: break-all;
+    font-size: 0.8rem;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.history-strength {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.history-strength.weak { color: #ef4444; }
+.history-strength.medium { color: #f59e0b; }
+.history-strength.strong { color: #10b981; }
+.history-strength.very-strong { color: #8b5cf6; }
+
+.history-time {
+    font-size: 0.65rem;
+    color: #64748b;
+}
+
+.history-copy {
+    padding: 6px;
+    background: rgba(99, 125, 236, 0.08);
+    border: 1px solid rgba(99, 125, 236, 0.15);
+    border-radius: 4px;
+    color: #637cec;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+}
+
+.history-copy:hover {
+    background: rgba(99, 125, 236, 0.12);
+    border-color: rgba(99, 125, 236, 0.25);
+}
+
+/* ==== 精美安全提示 ==== */
+.tips-section {
+    background: linear-gradient(135deg, rgba(56, 161, 105, 0.05) 0%, rgba(99, 125, 236, 0.05) 100%);
+    border-radius: 6px;
+    padding: 12px;
+    border: 1px solid rgba(56, 161, 105, 0.15);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.tip-card {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.tip-card i {
+    color: #38a169;
+    font-size: 1rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+.tip-content h4 {
+    margin: 0 0 8px 0;
+    color: #1a202c;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.tip-content ul {
+    margin: 0;
+    padding-left: 16px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.tip-content li {
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .password-generator-card {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+        border-radius: 12px;
+    }
+
+    .card-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .config-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .type-selector {
+        flex-direction: column;
+    }
+
+    .action-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .generate-btn, .clear-btn {
+        width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .history-info {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tip-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .password-output {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .copy-btn {
+        align-self: stretch;
+    }
+}
+
+/* ==== 超级流畅动画系统 ==== */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.generate-btn:active {
+    transform: translateY(-1px) scale(0.98);
+    transition: all 0.08s ease;
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+    transition: all 0.08s ease;
+}
+
+.type-btn:active {
+    transform: translateY(0) scale(0.98);
+    transition: all 0.08s ease;
+}
+
+.history-item {
+    animation-fill-mode: both;
+    will-change: transform, opacity;
+}
+
+.password-input:focus {
+    transform: translateY(-1px);
+    transition: all 0.12s ease;
+}
+
+/* 精美微交互 */
+.checkbox-item:active {
+    transform: scale(0.98);
+    transition: all 0.08s ease;
+}
+
+.history-copy:active {
+    transform: scale(0.9);
+    transition: all 0.08s ease;
+}
+
+/* GPU加速优化 */
+.password-generator-card,
+.password-section,
+.config-section,
+.history-section,
+.tips-section,
+.generate-btn,
+.copy-btn,
+.type-btn,
+.checkbox-item,
+.history-item {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* 简单流畅交互 */
+.generate-btn:hover,
+.copy-btn:hover,
+.type-btn:hover,
+.checkbox-item:hover,
+.history-item:hover {
+    transition: all 0.2s ease;
+}
+
+.generate-btn:active,
+.copy-btn:active,
+.type-btn:active,
+.checkbox-item:active,
+.history-copy:active {
+    transition: all 0.1s ease;
+}
+
+/* 自定义平滑动画 */
+@keyframes smoothFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==== 平滑缩放进入动画 ==== */
+.fade-in {
+    opacity: 0;
+    transform: scale(0.9);
+    animation: scaleIn 0.4s ease-out forwards;
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.05s; }
+.fade-in:nth-child(2) { animation-delay: 0.1s; }
+.fade-in:nth-child(3) { animation-delay: 0.15s; }
+.fade-in:nth-child(4) { animation-delay: 0.2s; }
+.fade-in:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes scaleIn {
+    to { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+}
+
+/* ==== 历史记录平滑动画 ==== */
+.history-enter-active {
+    transition: all 0.4s ease-out;
+}
+
+.history-leave-active {
+    transition: all 0.3s ease-in;
+}
+
+.history-enter-from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+}
+
+.history-leave-to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+}
+
+.history-move {
+    transition: transform 0.3s ease;
+}
+
+/* ==== 精美滚动条 ==== */
+.history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: rgba(99, 125, 236, 0.3);
+    border-radius: 2px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 125, 236, 0.5);
+}
+
+/* ==== 小屏幕优化 ==== */
+@media (max-width: 480px) {
+    .password-generator-card {
+        margin: 16px;
+        width: calc(100% - 32px);
+    }
+    
+    .card-header {
+        padding: 24px 20px 16px;
+    }
+    
+    .card-title {
+        font-size: 1.8rem;
+    }
+    
+    .card-body {
+        padding: 20px;
+        gap: 16px;
+    }
+    
+    .password-section, .config-section, .history-section, .tips-section {
+        padding: 20px;
+    }
+    
+    .config-item {
+        gap: 12px;
+    }
+    
+    .checkbox-item {
+        padding: 12px;
+    }
+    
+    .type-btn {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .generate-btn, .clear-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .history-item {
+        padding: 12px;
+    }
+}
+
+/* ==== 精美暗色模式适配 ==== */
+@media (prefers-color-scheme: dark) {
+    .password-generator-card {
+        background: #2d3748;
+        border-color: #4a5568;
+        box-shadow: 
+            0 4px 6px rgba(0, 0, 0, 0.15),
+            0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #2d3748 0%, #374151 100%);
+        border-color: #4a5568;
+    }
+    
+    .card-title {
+        color: #f7fafc;
+    }
+    
+    .card-subtitle {
+        color: #a0aec0;
+    }
+    
+    .password-section, .config-section, .history-section, .tips-section {
+        background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+        border-color: #4a5568;
+    }
+    
+    .password-input {
+        background: #1a202c;
+        border-color: #4a5568;
+        color: #f7fafc;
+    }
+    
+    .password-input:focus {
+        border-color: #90cdf4;
+    }
+    
+    .config-label {
+        color: #f7fafc;
+    }
+    
+    .checkbox-item, .type-btn {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .checkbox-item:hover, .type-btn:hover {
+        background: #374151;
+        color: #f7fafc;
+    }
+    
+    .history-item {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .history-item:hover {
+        background: #374151;
+    }
+    
+    .history-password {
+        color: #f7fafc;
+    }
+    
+    .tip-content h4 {
+        color: #f7fafc;
+    }
+}

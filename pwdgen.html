@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能密码生成器</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/pwdgen.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="password-generator-card">
+            <!-- 卡片头部 -->
+            <div class="card-header">
+                <h1 class="card-title">
+                    <i class="fas fa-shield-alt"></i>
+                    智能密码生成器
+                </h1>
+                <p class="card-subtitle">生成安全可靠的密码，保护您的数字生活</p>
+            </div>
+
+            <!-- 卡片主体 -->
+            <div class="card-body">
+                <!-- 密码生成区域 -->
+                <div class="password-section fade-in">
+                    <div class="password-display">
+                        <div class="password-output">
+                            <input type="text" :value="generatedPassword" readonly class="password-input"
+                                :class="passwordStrengthClass" placeholder="点击生成密码...">
+                            <button @click="copyPassword" class="copy-btn" :disabled="!generatedPassword">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength" v-if="generatedPassword">
+                            <div class="strength-bar">
+                                <div class="strength-fill" :style="{width: strengthPercentage + '%'}"
+                                    :class="passwordStrengthClass"></div>
+                            </div>
+                            <span class="strength-text" :class="passwordStrengthClass">{{ strengthText }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 配置区域 -->
+                <div class="config-section fade-in">
+                    <div class="config-grid">
+                        <!-- 密码长度 -->
+                        <div class="config-item">
+                            <label class="config-label">
+                                <i class="fas fa-ruler-horizontal"></i>
+                                密码长度
+                            </label>
+                            <div class="range-container">
+                                <input type="range" v-model="passwordLength" min="6" max="50" class="range-slider">
+                                <span class="range-value">{{ passwordLength }}</span>
+                            </div>
+                        </div>
+
+                        <!-- 密码类型 -->
+                        <div class="config-item">
+                            <label class="config-label">
+                                <i class="fas fa-cogs"></i>
+                                密码类型
+                            </label>
+                            <div class="type-selector">
+                                <button v-for="type in passwordTypes" :key="type.value"
+                                    @click="selectedType = type.value" class="type-btn"
+                                    :class="{active: selectedType === type.value}">
+                                    <i :class="type.icon"></i>
+                                    {{ type.label }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 字符选项 -->
+                        <div class="config-item full-width">
+                            <label class="config-label">
+                                <i class="fas fa-check-square"></i>
+                                包含字符
+                            </label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item" v-for="option in characterOptions" :key="option.key">
+                                    <input type="checkbox" v-model="option.enabled"
+                                        :disabled="selectedType !== 'custom'">
+                                    <span class="checkbox-custom"></span>
+                                    <i :class="option.icon"></i>
+                                    <span>{{ option.label }}</span>
+                                    <small>{{ option.example }}</small>
+                                </label>
+                            </div>
+                            </transition-group>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="action-section  fade-in" style="margin:  20px 0;">
+                        <button @click="generatePassword" class="generate-btn">
+                            <i class="fas fa-magic"></i>
+                            生成密码
+                        </button>
+                        <button @click="clearHistory" class="clear-btn" :disabled="passwordHistory.length === 0">
+                            <i class="fas fa-trash-alt"></i>
+                            清空历史
+                        </button>
+                    </div>
+
+                    <!-- 历史记录 -->
+                    <div class="history-section fade-in" v-if="passwordHistory.length > 0">
+                        <h3 class="history-title">
+                            <i class="fas fa-history"></i>
+                            生成历史
+                        </h3>
+                        <div class="history-list">
+                            <transition-group name="history" tag="div">
+                                <div v-for="(item, index) in passwordHistory" :key="item.password + item.time"
+                                    class="history-item">
+                                    <div class="history-password">{{ item.password }}</div>
+                                    <div class="history-info">
+                                        <span class="history-strength" :class="item.strengthClass">{{ item.strength
+                                            }}</span>
+                                        <span class="history-time">{{ item.time }}</span>
+                                    </div>
+                                    <button @click="copyPasswordFromHistory(item.password)" class="history-copy">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- 安全提示 -->
+                    <div class="tips-section fade-in">
+                        <div class="tip-card">
+                            <i class="fas fa-lightbulb"></i>
+                            <div class="tip-content">
+                                <h4>密码安全建议</h4>
+                                <ul>
+                                    <li>使用不同的密码保护不同的账户</li>
+                                    <li>定期更换重要账户的密码</li>
+                                    <li>避免使用个人信息作为密码</li>
+                                    <li>建议使用密码管理器保存密码</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue 3 -->
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <!-- Custom JS -->
+        <script src="js/pwdgen.js"></script>
+</body>
+
+</html>
