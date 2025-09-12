@@ -1,0 +1,582 @@
+/* ==== 加密货币计算器统一卡片样式 ==== */
+
+/* 页面背景装饰 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ==== 统一卡片容器 ==== */
+.calculator-card {
+    max-width: 1000px;
+    width: calc(100% - 24px);
+    margin: 20px auto;
+    padding: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 卡片顶部装饰条 */
+.calculator-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        #f59e0b 0%, 
+        #22c55e 25%, 
+        #3b82f6 50%, 
+        #8b5cf6 75%, 
+        #f59e0b 100%
+    );
+    opacity: 0.8;
+}
+
+/* ==== 卡片头部 ==== */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(241, 245, 249, 0.6);
+    background: rgba(255, 255, 255, 0.3);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.header-content {
+    flex: 1;
+    min-width: 300px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #1a202c;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-title i {
+    font-size: 1.1rem;
+}
+
+.card-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* ==== 交易类型选择器 ==== */
+.trade-type-selector {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.trade-type-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.trade-type-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.trade-type-btn.active {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.trade-type-btn i {
+    font-size: 0.8rem;
+}
+
+/* ==== 卡片主体 ==== */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px;
+}
+
+/* ==== 动画优化 ==== */
+.animate__delay-1s {
+    animation-delay: 0.2s !important;
+}
+
+.animate__delay-2s {
+    animation-delay: 0.6s !important;
+}
+
+/* 自适应动画速度 */
+.animate__animated {
+    animation-duration: 0.6s !important;
+}
+
+/* 头部缩放动画特效 */
+.card-title.animate__animated {
+    animation-duration: 0.6s !important;
+    transform-origin: left center;
+}
+
+.card-subtitle.animate__animated {
+    animation-duration: 0.5s !important;
+    transform-origin: left center;
+}
+
+/* 按钮组缩放动画 */
+.trade-type-selector.animate__animated {
+    animation-duration: 0.5s !important;
+    transform-origin: right center;
+}
+
+/* ==== 区块标题统一样式 ==== */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i {
+    color: #f59e0b;
+    font-size: 1rem;
+}
+
+/* ==== 输入区域 ==== */
+.input-section {
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.input-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.input-label i {
+    font-size: 0.7rem;
+    width: 12px;
+    color: #3b82f6;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.input-field {
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #1e293b;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.input-field::placeholder {
+    color: #94a3b8;
+}
+
+.input-group:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+
+.input-group:hover .input-label i {
+    transform: scale(1.1);
+    color: #f59e0b;
+}
+
+/* ==== 结果区域 ==== */
+.results-section {
+    background: rgba(254, 249, 239, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+/* ==== 结果卡片 ==== */
+.result-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    min-width: 0;
+    flex: 1;
+}
+
+.result-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.result-card:hover .result-icon {
+    transform: scale(1.05);
+}
+
+.result-card:hover .result-icon i {
+    transform: scale(1.1);
+}
+
+.result-card.highlight {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+}
+
+.result-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    flex-shrink: 0;
+}
+
+.result-card.highlight .result-icon {
+    background: #fef3c7;
+}
+
+.result-card.highlight .result-icon i {
+    color: #f59e0b;
+}
+
+.result-icon i {
+    font-size: 0.8rem;
+    color: #3b82f6;
+    transition: all 0.3s ease;
+}
+
+.result-content {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.result-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.result-label {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+/* ==== 颜色状态 ==== */
+.profit {
+    color: #059669 !important;
+}
+
+.loss {
+    color: #dc2626 !important;
+}
+
+.neutral {
+    color: #64748b !important;
+}
+
+/* ==== 响应式设计 ==== */
+@media (max-width: 968px) {
+    .card-body {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calculator-card {
+        margin: 20px 16px;
+    }
+    
+    .card-header {
+        padding: 20px 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .header-content {
+        min-width: auto;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .trade-type-selector {
+        align-self: stretch;
+    }
+    
+    .trade-type-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .card-body {
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .input-section,
+    .results-section {
+        padding: 20px;
+    }
+    
+    /* 强制小屏幕下保持两列 */
+    .input-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .result-card {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .result-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .result-icon i {
+        font-size: 0.7rem;
+    }
+
+    .result-value {
+        font-size: 0.8rem;
+    }
+
+    .result-label {
+        font-size: 0.65rem;
+    }
+
+    .input-section,
+    .results-section {
+        padding: 16px;
+    }
+
+    .input-group {
+        padding: 8px;
+        gap: 3px;
+    }
+
+    .input-label {
+        font-size: 0.7rem;
+        gap: 3px;
+    }
+
+    .input-label i {
+        font-size: 0.65rem;
+        width: 10px;
+    }
+
+    .input-field {
+        padding: 5px 6px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calculator-card {
+        margin: 16px 12px;
+    }
+    
+    .card-header {
+        padding: 16px 20px;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .card-body {
+        padding: 14px;
+    }
+    
+    .result-card {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .result-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .result-value {
+        font-size: 0.9rem;
+    }
+    
+    .result-label {
+        font-size: 0.75rem;
+    }
+}
+
+/* ==== 暗色模式支持 ==== */
+@media (prefers-color-scheme: dark) {
+    .calculator-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-color: #374151;
+    }
+    
+    .card-header {
+        background: rgba(31, 41, 55, 0.3);
+        border-color: rgba(55, 65, 81, 0.6);
+    }
+    
+    .card-title {
+        color: #f9fafb;
+    }
+    
+    .card-subtitle {
+        color: #9ca3af;
+    }
+    
+    .section-title {
+        color: #d1d5db;
+    }
+    
+    .input-section {
+        background: rgba(17, 24, 39, 0.5);
+        border-color: rgba(55, 65, 81, 0.5);
+    }
+    
+    .results-section {
+        background: rgba(69, 26, 3, 0.1);
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+    
+    .input-field {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .input-field:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+    
+    .result-card {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .result-card.highlight {
+        background: linear-gradient(135deg, #451a03 0%, #374151 100%);
+        border-color: #f59e0b;
+    }
+    
+    .result-value {
+        color: #f9fafb;
+    }
+    
+    .result-label {
+        color: #9ca3af;
+    }
+}

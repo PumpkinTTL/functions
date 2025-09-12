@@ -1,6 +1,7 @@
 ---
-alwaysApply: true
+type: "always_apply"
 ---
+
 1. 设计风格：现代极简玻璃拟态，半透明毛玻璃效果，【科技蓝/莫兰迪色系】渐变配色
 2. 技术栈：Ant Design Vue组件（表格、卡片、统计数值、导航菜单）+ Font Awesome Solid图标 + Animate.css动画效果
 3. 动画特性：页面元素带有fadeInUp入场动画，按钮有pulse悬停效果，卡片有float微交互

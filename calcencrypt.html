@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密货币交易收益计算器</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- 引入自定义样式 -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/calcencrypt.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 统一卡片容器 -->
+        <div class="calculator-card">
+            <!-- 卡片头部 -->
+            <div class="card-header animate__animated animate__fadeInDown">
+                <div class="header-content">
+                    <h1 class="card-title animate__animated animate__zoomIn">
+                        <i class="fas fa-coins"></i>
+                        加密货币交易收益计算器
+                    </h1>
+                    <p class="card-subtitle animate__animated animate__zoomIn animate__delay-1s">实时计算现货合约交易收益</p>
+                </div>
+
+                <!-- 交易类型选择 -->
+                <div class="trade-type-selector animate__animated animate__zoomIn animate__delay-1s">
+                    <button class="trade-type-btn" :class="{ active: tradeType === 'spot' }"
+                        @click="tradeType = 'spot'">
+                        <i class="fas fa-chart-line"></i>
+                        现货
+                    </button>
+                    <button class="trade-type-btn" :class="{ active: tradeType === 'contract' }"
+                        @click="tradeType = 'contract'">
+                        <i class="fas fa-chart-area"></i>
+                        合约
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- 交易结果区域 -->
+                <div class="results-section animate__animated animate__fadeInUp animate__delay-1s" v-if="isValidInput">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        交易结果
+                    </h3>
+
+                    <div class="results-grid">
+                        <div class="result-card highlight animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value" :class="profitClass">
+                                    ${{ formatNumber(results.profitAmount) }}
+                                </div>
+                                <div class="result-label">收益金额</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card highlight animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value" :class="profitClass">
+                                    {{ formatNumber(results.profitRate) }}%
+                                </div>
+                                <div class="result-label">收益率</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card highlight animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value" :class="netProfitClass">
+                                    ${{ formatNumber(results.netProfit) }}
+                                </div>
+                                <div class="result-label">净收益</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value" :class="priceChangeClass">
+                                    {{ formatNumber(results.priceChange) }}%
+                                </div>
+                                <div class="result-label">价格变化</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value neutral">
+                                    {{ formatNumber(results.coinAmount, 6) }}
+                                </div>
+                                <div class="result-label">持币数量</div>
+                            </div>
+                        </div>
+
+                        <div class="result-card animate__animated animate__zoomIn animate__delay-1s">
+                            <div class="result-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div class="result-content">
+                                <div class="result-value neutral">
+                                    ${{ formatNumber(results.totalFees) }}
+                                </div>
+                                <div class="result-label">总手续费</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 交易参数区域 -->
+                <div class="input-section animate__animated animate__fadeInUp animate__delay-2s">
+                    <h3 class="section-title">
+                        <i class="fas fa-cog"></i>
+                        交易参数
+                    </h3>
+
+                    <div class="input-grid">
+                        <div class="input-group animate__animated animate__slideInLeft animate__delay-2s">
+                            <label class="input-label">
+                                <i class="fas fa-sign-in-alt"></i>
+                                进场价格
+                            </label>
+                            <input type="number" class="input-field" v-model.number="entryPrice" placeholder="43000"
+                                step="0.01">
+                        </div>
+
+                        <div class="input-group animate__animated animate__slideInRight animate__delay-2s">
+                            <label class="input-label">
+                                <i class="fas fa-sign-out-alt"></i>
+                                出场价格
+                            </label>
+                            <input type="number" class="input-field" v-model.number="exitPrice" placeholder="47000"
+                                step="0.01">
+                        </div>
+
+                        <div class="input-group animate__animated animate__slideInLeft animate__delay-2s">
+                            <label class="input-label">
+                                <i class="fas fa-wallet"></i>
+                                投资金额
+                            </label>
+                            <input type="number" class="input-field" v-model.number="investmentAmount"
+                                placeholder="10000" min="1">
+                        </div>
+
+                        <div class="input-group animate__animated animate__slideInRight animate__delay-2s" v-if="tradeType === 'contract'">
+                            <label class="input-label">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                杠杆倍数
+                            </label>
+                            <select class="input-field" v-model.number="leverage">
+                                <option value="1">1x</option>
+                                <option value="2">2x</option>
+                                <option value="3">3x</option>
+                                <option value="5">5x</option>
+                                <option value="10">10x</option>
+                                <option value="20">20x</option>
+                                <option value="50">50x</option>
+                                <option value="100">100x</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group animate__animated animate__slideInLeft animate__delay-2s" v-if="tradeType === 'contract'">
+                            <label class="input-label">
+                                <i class="fas fa-arrows-alt-v"></i>
+                                持仓方向
+                            </label>
+                            <select class="input-field" v-model="positionType">
+                                <option value="long">做多</option>
+                                <option value="short">做空</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group animate__animated animate__slideInRight animate__delay-2s">
+                            <label class="input-label">
+                                <i class="fas fa-percentage"></i>
+                                手续费 (%)
+                            </label>
+                            <input type="number" class="input-field" v-model.number="tradingFee" placeholder="0.1"
+                                step="0.01" min="0" max="5">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/calcencrypt.js"></script>
+</body>
+
+</html>
