@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打字速度测试</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/typing-test.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="typing-container">
+            <!-- 顶部标题区域 -->
+            <div class="header-section fade-in">
+                <div class="header-left">
+                    <div class="nav-breadcrumb">
+                        <a href="index.html" class="breadcrumb-link">
+                            <i class="fas fa-home"></i>
+                            首页
+                        </a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current">打字速度测试</span>
+                    </div>
+                    <h1 class="app-title">
+                        <i class="fas fa-keyboard"></i>
+                        打字速度测试
+                    </h1>
+                    <p class="app-subtitle">测试你的打字速度和准确率，提升键盘技能</p>
+                </div>
+                <div class="header-right">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ currentWPM }}</span>
+                            <span class="stat-label">WPM</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ currentAccuracy }}%</span>
+                            <span class="stat-label">准确率</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ timeRemaining }}</span>
+                            <span class="stat-label">剩余时间</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ testHistory.length }}</span>
+                            <span class="stat-label">测试次数</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 测试配置区域 -->
+            <div class="config-section fade-in" v-if="!isTestActive">
+                <div class="config-card">
+                    <div class="config-header">
+                        <h3>
+                            <i class="fas fa-cog"></i>
+                            测试配置
+                        </h3>
+                    </div>
+                    <div class="config-content">
+                        <div class="config-row">
+                            <div class="config-group">
+                                <label class="config-label">
+                                    <i class="fas fa-clock"></i>
+                                    测试模式
+                                </label>
+                                <div class="mode-selector">
+                                    <button v-for="mode in testModes" :key="mode.value"
+                                        @click="selectedMode = mode.value"
+                                        class="mode-btn" :class="{ active: selectedMode === mode.value }">
+                                        <i :class="mode.icon"></i>
+                                        {{ mode.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-row" v-if="selectedMode === 'time'">
+                            <div class="config-group">
+                                <label class="config-label">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    测试时长
+                                </label>
+                                <div class="time-selector">
+                                    <button v-for="time in timeOptions" :key="time"
+                                        @click="selectedTime = time"
+                                        class="time-btn" :class="{ active: selectedTime === time }">
+                                        {{ time }}秒
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-row" v-if="selectedMode === 'words'">
+                            <div class="config-group">
+                                <label class="config-label">
+                                    <i class="fas fa-font"></i>
+                                    单词数量
+                                </label>
+                                <div class="words-selector">
+                                    <button v-for="count in wordOptions" :key="count"
+                                        @click="selectedWords = count"
+                                        class="words-btn" :class="{ active: selectedWords === count }">
+                                        {{ count }}词
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="config-group">
+                                <label class="config-label">
+                                    <i class="fas fa-language"></i>
+                                    语言类型
+                                </label>
+                                <div class="language-selector">
+                                    <button v-for="lang in languageOptions" :key="lang.value"
+                                        @click="selectedLanguage = lang.value"
+                                        class="lang-btn" :class="{ active: selectedLanguage === lang.value }">
+                                        <i :class="lang.icon"></i>
+                                        {{ lang.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="config-group">
+                                <label class="config-label">
+                                    <i class="fas fa-layer-group"></i>
+                                    难度等级
+                                </label>
+                                <div class="difficulty-selector">
+                                    <button v-for="diff in difficultyOptions" :key="diff.value"
+                                        @click="selectedDifficulty = diff.value"
+                                        class="diff-btn" :class="{ active: selectedDifficulty === diff.value }">
+                                        <i :class="diff.icon"></i>
+                                        {{ diff.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 测试进行区域 -->
+            <div class="test-section fade-in">
+                <!-- 测试文本显示 -->
+                <div class="text-display-card">
+                    <div class="text-content">
+                        <div class="test-text" ref="testTextRef">
+                            <span v-for="(char, index) in displayText" :key="index"
+                                :class="getCharClass(index)" class="text-char">{{ char }}</span>
+                        </div>
+                        <div class="cursor" :class="{ blink: !isTestActive }" ref="cursorRef"></div>
+                    </div>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="input-section">
+                    <div class="input-container">
+                        <textarea v-model="userInput" @input="handleInput" @keydown="handleKeydown"
+                            :disabled="!isTestActive && !canStart" ref="inputRef"
+                            class="typing-input" placeholder="点击开始按钮后开始输入..."
+                            spellcheck="false" autocomplete="off" autocorrect="off"></textarea>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="control-buttons">
+                    <button @click="startTest" v-if="!isTestActive" class="start-btn"
+                        :disabled="!canStart">
+                        <i class="fas fa-play"></i>
+                        开始测试
+                    </button>
+                    <button @click="pauseTest" v-if="isTestActive && !isPaused" class="pause-btn">
+                        <i class="fas fa-pause"></i>
+                        暂停
+                    </button>
+                    <button @click="resumeTest" v-if="isTestActive && isPaused" class="resume-btn">
+                        <i class="fas fa-play"></i>
+                        继续
+                    </button>
+                    <button @click="stopTest" v-if="isTestActive" class="stop-btn">
+                        <i class="fas fa-stop"></i>
+                        结束测试
+                    </button>
+                    <button @click="resetTest" class="reset-btn">
+                        <i class="fas fa-redo"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+
+            <!-- 实时统计区域 -->
+            <div class="stats-section fade-in" v-if="isTestActive">
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            实时统计
+                        </h3>
+                    </div>
+                    <div class="stats-content">
+                        <div class="real-time-stats">
+                            <div class="stat-box">
+                                <div class="stat-value">{{ currentWPM }}</div>
+                                <div class="stat-name">WPM</div>
+                                <div class="stat-desc">每分钟字数</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">{{ currentAccuracy }}%</div>
+                                <div class="stat-name">准确率</div>
+                                <div class="stat-desc">正确字符比例</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">{{ typedChars }}</div>
+                                <div class="stat-name">已输入</div>
+                                <div class="stat-desc">字符数量</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">{{ errorCount }}</div>
+                                <div class="stat-name">错误</div>
+                                <div class="stat-desc">错误次数</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="{ width: testProgress + '%' }"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 测试结果区域 -->
+            <div class="result-section fade-in" v-if="showResult">
+                <div class="result-card">
+                    <div class="result-header">
+                        <h3>
+                            <i class="fas fa-trophy"></i>
+                            测试结果
+                        </h3>
+                        <button @click="closeResult" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="result-content">
+                        <div class="result-summary">
+                            <div class="result-main">
+                                <div class="wpm-result">
+                                    <span class="wpm-value">{{ lastResult.wpm }}</span>
+                                    <span class="wpm-label">WPM</span>
+                                </div>
+                                <div class="accuracy-result">
+                                    <span class="accuracy-value">{{ lastResult.accuracy }}%</span>
+                                    <span class="accuracy-label">准确率</span>
+                                </div>
+                            </div>
+                            <div class="result-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">测试时长</span>
+                                    <span class="detail-value">{{ lastResult.duration }}秒</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">总字符数</span>
+                                    <span class="detail-value">{{ lastResult.totalChars }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">错误次数</span>
+                                    <span class="detail-value">{{ lastResult.errors }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">平均速度</span>
+                                    <span class="detail-value">{{ lastResult.avgSpeed }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-actions">
+                            <button @click="retryTest" class="retry-btn">
+                                <i class="fas fa-redo"></i>
+                                再试一次
+                            </button>
+                            <button @click="shareResult" class="share-btn">
+                                <i class="fas fa-share"></i>
+                                分享成绩
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史记录区域 -->
+            <div class="history-section fade-in" v-if="testHistory.length > 0">
+                <div class="history-card">
+                    <div class="history-header">
+                        <h3>
+                            <i class="fas fa-history"></i>
+                            测试历史
+                        </h3>
+                        <button @click="clearHistory" class="clear-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            清空历史
+                        </button>
+                    </div>
+                    <div class="history-content">
+                        <div class="history-list">
+                            <div v-for="(record, index) in testHistory.slice().reverse().slice(0, 10)" 
+                                :key="index" class="history-item">
+                                <div class="history-info">
+                                    <div class="history-stats">
+                                        <span class="wpm-badge">{{ record.wpm }} WPM</span>
+                                        <span class="accuracy-badge">{{ record.accuracy }}%</span>
+                                    </div>
+                                    <div class="history-meta">
+                                        <span class="test-mode">{{ getModeName(record.mode) }}</span>
+                                        <span class="test-time">{{ formatTime(record.timestamp) }}</span>
+                                    </div>
+                                </div>
+                                <div class="history-chart">
+                                    <div class="mini-progress">
+                                        <div class="mini-fill" :style="{ width: (record.accuracy) + '%' }"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载指示器 -->
+        <div v-if="isLoading" class="loading-overlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>准备测试文本...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Custom JS -->
+    <script src="js/typing-test.js"></script>
+</body>
+
+</html>

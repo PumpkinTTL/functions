@@ -49,6 +49,13 @@ window.addEventListener('load', function() {
             title: '智能文本处理工具',
             color: '#667eea',
             url: 'textprocessor.html'
+          },
+          {
+            key: 'typing-test',
+            icon: 'fas fa-keyboard',
+            title: '打字速度测试',
+            color: '#9f7aea',
+            url: 'typing-test.html'
           }
         ]);
 
@@ -57,7 +64,7 @@ window.addEventListener('load', function() {
           {
             key: 'total-functions',
             title: '可用功能',
-            value: 5,
+            value: 6,
             suffix: '个',
             prefix: ''
           },
@@ -76,8 +83,8 @@ window.addEventListener('load', function() {
             prefix: ''
           },
           {
-            key: 'text-processor',
-            title: '文本处理器',
+            key: 'typing-test',
+            title: '打字测试',
             value: 1,
             suffix: '个',
             prefix: ''
@@ -171,11 +178,12 @@ function showFallbackContent() {
         <h1 style="color: #1a202c; margin-bottom: 20px;">功能导航</h1>
         <p style="margin-bottom: 30px;">选择功能模块，开始工作</p>
         <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 40px;">
-          <button onclick="window.location.href='calcencrypt.html'" style="padding: 14px 24px; background: #637cec; color: white; border: none; border-radius: 8px; cursor: pointer;">🧮 加密货币计算器</button>
+          <button onclick="window.location.href='calcencrypt.html'" style="padding: 14px 24px; background: #637cec; color: white; border: none; border-radius: 8px; cursor: pointer;">🧨 加密货币计算器</button>
           <button onclick="window.location.href='pwdgen.html'" style="padding: 14px 24px; background: #38a169; color: white; border: none; border-radius: 8px; cursor: pointer;">🔑 智能密码生成器</button>
           <button onclick="window.location.href='todolist.html'" style="padding: 14px 24px; background: #d69e2e; color: white; border: none; border-radius: 8px; cursor: pointer;">📝 智能待办管理器</button>
           <button onclick="window.location.href='decision-wheel.html'" style="padding: 14px 24px; background: #e53e3e; color: white; border: none; border-radius: 8px; cursor: pointer;">🎲 随机决策轮盘</button>
           <button onclick="window.location.href='textprocessor.html'" style="padding: 14px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 智能文本处理工具</button>
+          <button onclick="window.location.href='typing-test.html'" style="padding: 14px 24px; background: #9f7aea; color: white; border: none; border-radius: 8px; cursor: pointer;">⌨️ 打字速度测试</button>
         </div>
         <div style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center;">
