@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能文本处理工具</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/textprocessor.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="processor-container">
+            <!-- 顶部面包屑和标题 -->
+            <div class="header-section fade-in">
+                <div class="nav-breadcrumb">
+                    <a href="index.html" class="breadcrumb-link">
+                        <i class="fas fa-home"></i>
+                        首页
+                    </a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">智能文本处理工具</span>
+                </div>
+
+                <div class="header-content">
+                    <h1 class="app-title">
+                        <i class="fas fa-font"></i>
+                        智能文本处理工具
+                    </h1>
+                    <p class="app-subtitle">文本转换、统计分析、美化格式、二维码生成</p>
+                </div>
+            </div>
+
+            <!-- 文本输入区域 -->
+            <div class="input-section fade-in">
+                <!-- 精简统计条 -->
+                <div class="stats-bar" v-if="inputText.trim()">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ textStats.characters }}</span>
+                        <span class="stat-name">字符</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ textStats.words }}</span>
+                        <span class="stat-name">单词</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ textStats.lines }}</span>
+                        <span class="stat-name">行数</span>
+                    </div>
+                    <div class="stat-item" v-if="textStats.chineseChars > 0">
+                        <span class="stat-value">{{ textStats.chineseChars }}</span>
+                        <span class="stat-name">中文</span>
+                    </div>
+                </div>
+                
+                <div class="input-card">
+                    <div class="input-header">
+                        <h3>
+                            <i class="fas fa-edit"></i>
+                            文本输入
+                        </h3>
+                        <div class="input-actions">
+                            <button @click="pasteText" class="action-btn">
+                                <i class="fas fa-clipboard"></i>
+                                粘贴
+                            </button>
+                            <button @click="clearInput" class="action-btn danger">
+                                <i class="fas fa-trash-alt"></i>
+                                清空
+                            </button>
+                        </div>
+                    </div>
+                    <div class="textarea-container">
+                        <textarea v-model="inputText" placeholder="请输入或粘贴需要处理的文本内容..." class="text-input"
+                            @input="updateStats"></textarea>
+                        <div class="textarea-overlay" v-if="!inputText.trim()">
+                            <i class="fas fa-keyboard"></i>
+                            <span>开始输入文本进行处理</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能操作面板 -->
+            <div class="tools-section fade-in">
+                <div class="tools-grid">
+                    <!-- 文本转换工具 -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <i class="fas fa-exchange-alt"></i>
+                            <h3>文本转换</h3>
+                        </div>
+                        <div class="tool-buttons">
+                            <button @click="convertCase('upper')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-font"></i>
+                                转大写
+                            </button>
+                            <button @click="convertCase('lower')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-font"></i>
+                                转小写
+                            </button>
+                            <button @click="convertCase('capitalize')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-text-height"></i>
+                                首字母大写
+                            </button>
+                            <button @click="convertToPinyin" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-language"></i>
+                                转拼音
+                            </button>
+                            <button @click="convertToMorse" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-broadcast-tower"></i>
+                                摩斯密码
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 文本分析工具 -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>文本分析</h3>
+                        </div>
+                        <div class="tool-buttons">
+                            <button @click="extractKeywords" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-key"></i>
+                                提取关键词
+                            </button>
+                            <button @click="analyzeReadability" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-eye"></i>
+                                可读性分析
+                            </button>
+                            <button @click="findDuplicates" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-copy"></i>
+                                查重复内容
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 文本美化工具 -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <i class="fas fa-magic"></i>
+                            <h3>文本美化</h3>
+                        </div>
+                        <div class="tool-buttons">
+                            <button @click="formatText('trim')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-compress"></i>
+                                去除空白
+                            </button>
+                            <button @click="formatText('indent')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-indent"></i>
+                                格式化缩进
+                            </button>
+                            <button @click="formatText('bullets')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-list-ul"></i>
+                                添加列表符
+                            </button>
+                            <button @click="formatText('numbers')" class="tool-btn" :disabled="!inputText.trim()">
+                                <i class="fas fa-list-ol"></i>
+                                添加序号
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 二维码生成工具 -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <i class="fas fa-qrcode"></i>
+                            <h3>二维码生成</h3>
+                        </div>
+                        <div class="qr-controls">
+                            <div class="qr-input-group">
+                                <input type="number" v-model="qrSize" min="100" max="500" placeholder="大小"
+                                    class="qr-size-input">
+                                <button @click="generateQRCode" class="tool-btn primary" :disabled="!inputText.trim()">
+                                    <i class="fas fa-qrcode"></i>
+                                    生成二维码
+                                </button>
+                            </div>
+                            <div class="qr-result" v-if="qrCodeUrl">
+                                <img :src="qrCodeUrl" :alt="'QR Code'" class="qr-image">
+                                <button @click="downloadQRCode" class="download-btn">
+                                    <i class="fas fa-download"></i>
+                                    下载
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结果输出区域 -->
+            <div class="output-section fade-in" v-if="outputText || analysisResult">
+                <div class="output-card">
+                    <div class="output-header">
+                        <h3>
+                            <i class="fas fa-file-export"></i>
+                            处理结果
+                        </h3>
+                        <div class="output-actions">
+                            <button @click="copyOutput" class="action-btn primary">
+                                <i class="fas fa-copy"></i>
+                                复制结果
+                            </button>
+                            <button @click="clearOutput" class="action-btn">
+                                <i class="fas fa-eraser"></i>
+                                清空
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 文本结果 -->
+                    <div v-if="outputText" class="output-content">
+                        <div class="output-text">{{ outputText }}</div>
+                    </div>
+
+                    <!-- 分析结果 -->
+                    <div v-if="analysisResult" class="analysis-content">
+                        <div class="analysis-grid">
+                            <div v-for="(item, key) in analysisResult" :key="key" class="analysis-item">
+                                <div class="analysis-label">{{ key }}</div>
+                                <div class="analysis-value">{{ item }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 处理历史 -->
+            <div class="history-section fade-in" v-if="processHistory.length > 0">
+                <div class="history-header">
+                    <h3>
+                        <i class="fas fa-history"></i>
+                        处理历史
+                    </h3>
+                    <button @click="clearHistory" class="clear-btn">
+                        <i class="fas fa-trash-alt"></i>
+                        清空历史
+                    </button>
+                </div>
+                <div class="history-list">
+                    <div v-for="(item, index) in processHistory.slice().reverse()" :key="index" class="history-item">
+                        <div class="history-info">
+                            <span class="history-type">{{ item.type }}</span>
+                            <span class="history-time">{{ formatTime(item.timestamp) }}</span>
+                        </div>
+                        <div class="history-preview">{{ item.preview }}</div>
+                        <button @click="useHistoryItem(item)" class="use-btn">
+                            <i class="fas fa-redo"></i>
+                            使用
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载指示器 -->
+        <div v-if="isProcessing" class="loading-overlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>正在处理...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Custom JS -->
+    <script src="js/textprocessor.js"></script>
+</body>
+
+</html>
