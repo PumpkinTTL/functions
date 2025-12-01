@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON格式化工具</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/json-formatter.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="json-formatter-card">
+            <!-- 面包屑导航 -->
+            <div class="nav-breadcrumb animate__animated animate__fadeInDown">
+                <a href="index.html" class="breadcrumb-link">
+                    <i class="fas fa-home"></i>
+                    首页
+                </a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-current">JSON格式化工具</span>
+            </div>
+
+            <!-- 卡片头部 -->
+            <div class="card-header animate__animated animate__fadeInDown">
+                <div class="header-left">
+                    <h1 class="card-title">
+                        <i class="fas fa-code"></i>
+                        JSON格式化工具
+                    </h1>
+                    <p class="card-subtitle">美化、压缩和验证JSON数据，支持语法高亮</p>
+                </div>
+                <div class="header-right">
+                    <div class="stats-mini">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ stats.characters }}</span>
+                            <span class="stat-label">字符</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ stats.lines }}</span>
+                            <span class="stat-label">行数</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number"
+                                :class="{ 'text-success': isValid, 'text-error': !isValid && !isEmpty }">
+                                {{ isValid ? '有效' : (isEmpty ? '-' : '无效') }}
+                            </span>
+                            <span class="stat-label">状态</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片主体 -->
+            <div class="card-body animate__animated animate__fadeInUp">
+                <!-- 工具栏 -->
+                <div class="toolbar-section">
+                    <div class="toolbar-left">
+                        <button class="btn btn-primary btn-sm" @click="formatJson" :disabled="isEmpty">
+                            <i class="fas fa-magic"></i>
+                            格式化
+                        </button>
+                        <button class="btn btn-secondary btn-sm" @click="compressJson" :disabled="isEmpty">
+                            <i class="fas fa-compress"></i>
+                            压缩
+                        </button>
+                        <button class="btn btn-info btn-sm" @click="validateJson" :disabled="isEmpty">
+                            <i class="fas fa-check-circle"></i>
+                            验证
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <div class="indent-control">
+                            <label>缩进:</label>
+                            <select v-model="indentSize" class="indent-select">
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option value="tab">Tab</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-success btn-sm" @click="copyToClipboard" :disabled="!outputText">
+                            <i class="fas fa-copy"></i>
+                            复制
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 编辑器区域 -->
+                <div class="editor-container">
+                    <!-- 输入区域 -->
+                    <div class="editor-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-edit"></i>
+                                输入JSON
+                            </h3>
+                            <div class="editor-actions">
+                                <button class="btn-icon btn-sm" @click="loadSample" title="加载示例">
+                                    <i class="fas fa-file-code"></i>
+                                </button>
+                                <button class="btn-icon btn-sm" @click="clearInput" title="清空">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="editor-wrapper">
+                            <textarea v-model="inputText" class="json-input" placeholder="输入或粘贴JSON数据..."
+                                @input="onInputChange" @keydown="handleKeydown" spellcheck="false"></textarea>
+                            <div v-if="errorMessage" class="error-message">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {{ errorMessage }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 输出区域 -->
+                    <div class="editor-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-export"></i>
+                                格式化结果
+                            </h3>
+                            <div class="editor-actions">
+                                <button class="btn-icon btn-sm" @click="toggleLineNumbers"
+                                    :class="{ active: showLineNumbers }" title="行号">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+                                <button class="btn-icon btn-sm" @click="downloadJson" :disabled="!outputText"
+                                    title="下载">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="editor-wrapper">
+                            <div class="json-output" :class="{ 'show-line-numbers': showLineNumbers }">
+                                <div v-if="showLineNumbers" class="line-numbers">
+                                    <div v-for="n in lineCount" :key="n" class="line-number">{{ n }}</div>
+                                </div>
+                                <pre v-if="outputText" class="json-content" v-html="highlightedOutput"></pre>
+                                <div v-else class="empty-output">
+                                    <i class="fas fa-code"></i>
+                                    <p>格式化结果</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能提示 -->
+                <div class="features-hint">
+                    <div class="hint-item">
+                        <i class="fas fa-keyboard"></i>
+                        <span>快捷键: Ctrl+Enter 格式化 | Ctrl+S 下载</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/json-formatter.js"></script>
+</body>
+
+</html>

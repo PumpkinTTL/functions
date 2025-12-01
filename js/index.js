@@ -51,6 +51,13 @@ window.addEventListener('load', function() {
             url: 'textprocessor.html'
           },
           {
+            key: 'json-formatter',
+            icon: 'fas fa-code',
+            title: 'JSON格式化工具',
+            color: '#38a169',
+            url: 'json-formatter.html'
+          },
+          {
             key: 'typing-test',
             icon: 'fas fa-keyboard',
             title: '打字速度测试',
@@ -64,7 +71,7 @@ window.addEventListener('load', function() {
           {
             key: 'total-functions',
             title: '可用功能',
-            value: 6,
+            value: 7,
             suffix: '个',
             prefix: ''
           },
@@ -183,11 +190,12 @@ function showFallbackContent() {
           <button onclick="window.location.href='todolist.html'" style="padding: 14px 24px; background: #d69e2e; color: white; border: none; border-radius: 8px; cursor: pointer;">📝 智能待办管理器</button>
           <button onclick="window.location.href='decision-wheel.html'" style="padding: 14px 24px; background: #e53e3e; color: white; border: none; border-radius: 8px; cursor: pointer;">🎲 随机决策轮盘</button>
           <button onclick="window.location.href='textprocessor.html'" style="padding: 14px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 智能文本处理工具</button>
+          <button onclick="window.location.href='json-formatter.html'" style="padding: 14px 24px; background: #38a169; color: white; border: none; border-radius: 8px; cursor: pointer;">📋 JSON格式化工具</button>
           <button onclick="window.location.href='typing-test.html'" style="padding: 14px 24px; background: #9f7aea; color: white; border: none; border-radius: 8px; cursor: pointer;">⌨️ 打字速度测试</button>
         </div>
         <div style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center;">
-            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">5个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
+            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">7个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
             <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">加密计算器</div></div>
             <div><div style="font-size: 1.8rem; color: #38a169; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">密码生成器</div></div>
             <div><div style="font-size: 1.8rem; color: #667eea; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">文本处理器</div></div>
