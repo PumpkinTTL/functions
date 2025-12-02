@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密工具集合</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- CryptoJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/normal.css">
+    <link rel="stylesheet" href="css/crypto-tools.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="crypto-tools-card">
+            <!-- 面包屑导航 -->
+            <div class="nav-breadcrumb">
+                <a href="index.html" class="breadcrumb-link">
+                    <i class="fas fa-home"></i>
+                    首页
+                </a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-current">加密工具集合</span>
+            </div>
+
+            <!-- 卡片头部 -->
+            <div class="card-header">
+                <div class="header-left">
+                    <h1 class="card-title animate__fadeInScale animate__delay-0s">
+                        <i class="fas fa-shield-alt animate__glowIn animate__delay-0.5s"></i>
+                        加密工具集合
+                    </h1>
+                    <p class="card-subtitle animate__slideInFromTop animate__delay-0.5s">MD5、SHA256、AES加密解密工具，安全可靠</p>
+                </div>
+                <div class="header-right">
+                    <div class="stats-mini">
+                        <div class="stat-item animate__zoomRotate animate__delay-2s">
+                            <span class="stat-number">{{ stats.algorithms }}</span>
+                            <span class="stat-label">算法</span>
+                        </div>
+                        <div class="stat-item animate__waveIn animate__delay-3s">
+                            <span class="stat-number">{{ stats.operations }}</span>
+                            <span class="stat-label">操作</span>
+                        </div>
+                        <div class="stat-item animate__flipSlide animate__delay-4s">
+                            <span class="stat-number" :class="{ 'text-success': hasContent, 'text-muted': !hasContent }">
+                                {{ hasContent ? '就绪' : '空闲' }}
+                            </span>
+                            <span class="stat-label">状态</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片主体 -->
+            <div class="card-body">
+                <!-- 算法选择标签 -->
+                <div class="algorithm-tabs">
+                    <button v-for="(tab, index) in algorithmTabs" :key="tab.id"
+                            class="tab-btn animate__rotateSlide"
+                            :class="{ active: activeTab === tab.id }"
+                            :style="`animation-delay: ${index * 0.15 + 0.5}s`"
+                            @click="switchTab(tab.id)">
+                        <i :class="tab.icon"></i>
+                        {{ tab.name }}
+                    </button>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="input-section">
+                    <div class="section-header animate__waveIn animate__delay-5s">
+                        <h3 class="section-title">
+                            <i class="fas fa-edit animate__waveIn animate__infinite animate__slow"></i>
+                            输入内容
+                        </h3>
+                        <div class="editor-actions">
+                            <button class="btn-icon btn-sm animate__waveIn animate__delay-6s" @click="loadSample" title="加载示例">
+                                <i class="fas fa-file-text"></i>
+                            </button>
+                            <button class="btn-icon btn-sm animate__waveIn animate__delay-7s" @click="clearInput" title="清空">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn-icon btn-sm animate__waveIn animate__delay-8s" @click="pasteFromClipboard" title="粘贴">
+                                <i class="fas fa-paste"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea v-model="inputText" class="crypto-input animate__fadeInScale animate__delay-9s"
+                              :placeholder="getPlaceholder()"
+                              @input="onInputChange"
+                              spellcheck="false"></textarea>
+                </div>
+
+                <!-- AES密码输入（仅AES模式显示） -->
+                <div v-if="activeTab === 'aes'" class="password-section animate__waveIn animate__delay-10s">
+                    <div class="section-header animate__waveIn animate__delay-11s">
+                        <h3 class="section-title">
+                            <i class="fas fa-key animate__animated animate__pulse animate__infinite animate__slow"></i>
+                            加密密码
+                        </h3>
+                        <div class="editor-actions">
+                            <button class="btn-icon btn-sm animate__rotateIn animate__delay-12s" @click="generatePassword" title="生成随机密码">
+                                <i class="fas fa-dice"></i>
+                            </button>
+                            <button class="btn-icon btn-sm animate__flipIn animate__delay-13s"
+                                    :class="{ active: showPassword }"
+                                    @click="togglePasswordVisibility"
+                                    title="显示/隐藏密码">
+                                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <input v-model="aesPassword"
+                           :type="showPassword ? 'text' : 'password'"
+                           class="password-input animate__slideInUp animate__delay-14s"
+                           placeholder="请输入加密密码（至少8位）">
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-section animate__waveIn animate__delay-15s">
+                    <div class="action-buttons">
+                        <button v-if="activeTab === 'aes'"
+                                class="btn btn-primary animate__waveIn animate__delay-16s"
+                                @click="encryptAES"
+                                :disabled="!canEncrypt">
+                            <i class="fas fa-lock"></i>
+                            加密
+                        </button>
+                        <button v-if="activeTab === 'aes'"
+                                class="btn btn-secondary animate__waveIn animate__delay-17s"
+                                @click="decryptAES"
+                                :disabled="!canDecrypt">
+                            <i class="fas fa-unlock"></i>
+                            解密
+                        </button>
+                        <button v-if="activeTab !== 'aes'"
+                                class="btn btn-primary animate__waveIn animate__delay-16s"
+                                @click="hashText"
+                                :disabled="!inputText.trim()">
+                            <i class="fas fa-fingerprint"></i>
+                            生成{{ getAlgorithmName() }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 输出结果 -->
+                <div class="output-section animate__waveIn animate__delay-18s">
+                    <div class="section-header animate__waveIn animate__delay-19s">
+                        <h3 class="section-title">
+                            <i class="fas fa-file-export animate__waveIn animate__infinite animate__slow"></i>
+                            {{ getOutputTitle() }}
+                        </h3>
+                        <div class="editor-actions">
+                            <button class="btn-icon btn-sm animate__waveIn animate__delay-20s"
+                                    @click="copyToClipboard"
+                                    :disabled="!outputText"
+                                    title="复制">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn-icon btn-sm animate__waveIn animate__delay-21s"
+                                    @click="downloadResult"
+                                    :disabled="!outputText"
+                                    title="下载">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="output-wrapper animate__waveIn animate__delay-22s">
+                        <div v-if="outputText" class="output-content">
+                            <pre class="result-text animate__waveIn animate__delay-23s">{{ outputText }}</pre>
+                        </div>
+                        <div v-else class="empty-output animate__waveIn animate__delay-23s">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>{{ getOutputPlaceholder() }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 错误提示 -->
+                <div v-if="errorMessage" class="error-message animate__waveIn animate__delay-24s">
+                    <i class="fas fa-exclamation-triangle animate__waveIn animate__infinite"></i>
+                    {{ errorMessage }}
+                </div>
+
+                <!-- 功能提示 -->
+                <div class="features-hint">
+                    <div class="hint-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ getHintText() }}</span>
+                    </div>
+                    <div class="hint-item">
+                        <i class="fas fa-keyboard"></i>
+                        <span>快捷键: Ctrl+Enter {{ activeTab === 'aes' ? '加密' : '生成Hash' }} | Ctrl+C 复制结果</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入自定义脚本 -->
+    <script src="js/crypto-tools-simple.js"></script>
+</body>
+
+</html>
