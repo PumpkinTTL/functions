@@ -63,6 +63,13 @@ window.addEventListener('load', function() {
             title: '打字速度测试',
             color: '#9f7aea',
             url: 'typing-test.html'
+          },
+          {
+            key: '2fa-authenticator',
+            icon: 'fas fa-shield-alt',
+            title: '双因素认证器',
+            color: '#F97316',
+            url: '2fa-authenticator.html'
           }
         ]);
 
@@ -71,7 +78,7 @@ window.addEventListener('load', function() {
           {
             key: 'total-functions',
             title: '可用功能',
-            value: 7,
+            value: 8,
             suffix: '个',
             prefix: ''
           },
@@ -192,10 +199,11 @@ function showFallbackContent() {
           <button onclick="window.location.href='textprocessor.html'" style="padding: 14px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 智能文本处理工具</button>
           <button onclick="window.location.href='json-formatter.html'" style="padding: 14px 24px; background: #38a169; color: white; border: none; border-radius: 8px; cursor: pointer;">📋 JSON格式化工具</button>
           <button onclick="window.location.href='typing-test.html'" style="padding: 14px 24px; background: #9f7aea; color: white; border: none; border-radius: 8px; cursor: pointer;">⌨️ 打字速度测试</button>
+          <button onclick="window.location.href='2fa-authenticator.html'" style="padding: 14px 24px; background: #F97316; color: white; border: none; border-radius: 8px; cursor: pointer;">🛡️ 双因素认证器</button>
         </div>
         <div style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center;">
-            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">7个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
+            <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">8个</div><div style="font-size: 0.85rem; color: #718096;">可用功能</div></div>
             <div><div style="font-size: 1.8rem; color: #637cec; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">加密计算器</div></div>
             <div><div style="font-size: 1.8rem; color: #38a169; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">密码生成器</div></div>
             <div><div style="font-size: 1.8rem; color: #667eea; margin-bottom: 8px;">1个</div><div style="font-size: 0.85rem; color: #718096;">文本处理器</div></div>
